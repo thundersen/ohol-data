@@ -1,8 +1,18 @@
 #!env/bin/python3
 import datetime
 import sched
-
+import pandas as pd
+import plotly.graph_objs as go
 import requests
+from plotly.offline import plot
+
+CSV_FILE = 'OholPlayersByServer.csv'
+
+
+def process_current_player_counts():
+    data = fetch()
+    write(data, CSV_FILE)
+    draw(CSV_FILE)
 
 
 def fetch():
@@ -27,16 +37,11 @@ def parse_player_count(server_line):
     return '' if server_line.endswith('OFFLINE') else server_line.split()[-3]
 
 
-def write(data):
+def write(data, filename):
     data_line = ';'.join(data)
-    with open("OholPlayersByServer.csv", "a") as file:
+    with open(filename, "a") as file:
         file.write(data_line + '\n')
     print(data_line)
-
-
-def get_current_player_counts():
-    data = fetch()
-    write(data)
 
 
 def periodic(scheduler, interval, action):
@@ -44,7 +49,27 @@ def periodic(scheduler, interval, action):
     action()
 
 
+def draw(filename):
+    servers = ['server%s' % (n + 1) for n in range(15)]
+
+    df = pd.read_csv(filename, sep=';', names=['timestamp'] + servers)
+
+    df['sum'] = df.apply(calculate_sum, axis=1)
+
+    data = [plot_column(name, df) for name in servers + ['sum']]
+
+    plot(data)
+
+
+def calculate_sum(row):
+    return sum(row[1:])
+
+
+def plot_column(name, df):
+    return go.Scatter(x=df.timestamp, y=df[name], name=name)
+
+
 if __name__ == '__main__':
     s = sched.scheduler()
-    periodic(s, 5 * 60, get_current_player_counts)
+    periodic(s, 5 * 60, process_current_player_counts)
     s.run()
