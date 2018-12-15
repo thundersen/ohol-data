@@ -3,8 +3,8 @@ import datetime
 import sched
 import pandas as pd
 import plotly.graph_objs as go
+import plotly.plotly as py
 import requests
-from plotly.offline import plot
 
 CSV_FILE = 'OholPlayersByServer.csv'
 
@@ -50,6 +50,20 @@ def periodic(scheduler, interval, action):
 
 
 def draw(filename):
+    fig = dict(
+        data=arrange_plot_data(filename),
+        layout=dict(
+            title='OHOL Players by Server',
+            xaxis=dict(
+                rangeslider=dict(visible=True),
+                type='date'
+            )
+        ))
+
+    py.plot(fig, filename='OHOL Players By Server', auto_open=False)
+
+
+def arrange_plot_data(filename):
     servers = ['server%s' % (n + 1) for n in range(15)]
 
     df = pd.read_csv(filename, sep=';', names=['timestamp'] + servers)
@@ -58,7 +72,7 @@ def draw(filename):
 
     data = [plot_column(name, df) for name in servers + ['sum']]
 
-    plot(data)
+    return data
 
 
 def calculate_sum(row):
