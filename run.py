@@ -60,7 +60,14 @@ def draw(filename):
             )
         ))
 
-    py.plot(fig, filename='OHOL Players By Server', auto_open=False)
+    upload_plot(fig)
+
+
+def upload_plot(figure):
+    try:
+        py.plot(figure, filename=figure['layout']['title'], auto_open=False)
+    except Exception as e:
+        print('ERROR creating plot:\n{0}'.format(e))
 
 
 def arrange_plot_data(filename):
