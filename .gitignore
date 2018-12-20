@@ -3,3 +3,4 @@ env/
 *.ods*
 .idea/
 *.html
+test_data/
