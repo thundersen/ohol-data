@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime, timedelta
 
-from OholCharacter import OholCharacter
+from logreader.ohol_character import OholCharacter
 
 default_birth = datetime(2019, 1, 1)
 

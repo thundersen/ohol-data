@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from timeutils import round_minute
+from timeutils.timeutils import round_minute
 
 
 class TestRoundMinute(unittest.TestCase):

@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as py
 
-from OholCharacter import OholCharacter
+from logreader.ohol_character import OholCharacter
 from timeutils.timeutils import round_minute_range, round_minute
 
 LOG = 'test_data/2018_12December_18_Tuesday.txt'
