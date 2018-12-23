@@ -9,9 +9,9 @@ import plotly.offline as py
 from logreader.reader import read_complete_characters
 from timeutils.timeutils import round_minute_range, round_minute
 
-LOG = 'test_data/2018_12December_18_Tuesday.txt'
+LOG = 'lifelogs/server01/2018_12December_18_Tuesday.txt'
 
-NAMES = 'test_data/2018_12December_18_Tuesday_names.txt'
+NAMES = 'lifelogs/server01/2018_12December_18_Tuesday_names.txt'
 
 START = datetime(2018, 12, 18)
 
@@ -40,7 +40,7 @@ def create_stats_per_minute(characters, start, end):
 
         result[round_minute(character.birth)].n_births += 1
 
-        for minute in character.get_fertile_mom_minutes():
+        for minute in character.fertile_mom_minutes():
             result[minute].n_fertile_moms += 1
 
     return result
@@ -104,10 +104,12 @@ if __name__ == '__main__':
 
     plot_data = arrange_plot_data(minute_stats)
 
-    interesting_mom = characters[INTERESTING_MOM_ID]
+#    interesting_mom = characters[INTERESTING_MOM_ID]
 
-    print(interesting_mom)
+#    print(interesting_mom)
 
-    print_expected_kids(interesting_mom)
+#    print_expected_kids(interesting_mom)
 
-    create_plot(interesting_mom, plot_data)
+#    create_plot(interesting_mom, plot_data)
+
+    py.plot(plot_data)

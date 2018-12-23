@@ -3,5 +3,6 @@ env/
 *.ods*
 .idea/
 *.html
-test_data/
+lifelogs/
 **/*.iml
+__pycache__/

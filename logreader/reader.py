@@ -35,6 +35,18 @@ def read_characters(names_file, lifelog_file):
             if log_type == 'B':
                 characters[character_id].birth = timestamp
                 characters[character_id].sex = split[4]
+
+                parent = split[6]
+
+                if parent == 'noParent':
+                    characters[character_id].mark_as_eve()
+                else:
+                    mom_id = parent.split('=')[1]
+
+                    if mom_id in characters:
+                        characters[mom_id].add_kid(character_id)
+                    else:
+                        print('ERROR: unknown mom: ' + mom_id)
             elif log_type == 'D':
                 characters[character_id].death = timestamp
             else:
