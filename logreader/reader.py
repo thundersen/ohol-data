@@ -1,74 +1,45 @@
 from datetime import datetime
 
-from logreader.ohol_character import OholCharacter
+from logreader.history import History
 
 
 def read_complete_characters(names_file, lifelog_file):
-    characters = read_characters(names_file, lifelog_file)
+    history = read_characters(names_file, lifelog_file)
 
-    print_completeness_report(characters)
+    history.print_completeness_report()
 
-    delete_incomplete_characters(characters)
-
-    return characters
+    return history.complete_characters()
 
 
 def read_characters(names_file, lifelog_file):
-    characters = {}
+    history = History()
 
     with open(names_file, "r") as file:
         for line in file:
             split = line.split()
-            characters[split[0]] = OholCharacter(split[0], " ".join(split[1:]))
+            character_id = split[0]
+            name = " ".join(split[1:])
+            history.record_name(character_id, name)
 
     with open(lifelog_file, "r") as file:
         for line in file:
             split = line.split()
+
+            log_type = split[0]
+            timestamp = datetime.utcfromtimestamp(int(split[1]))
             character_id = split[2]
 
-            if character_id not in characters:
-                characters[character_id] = OholCharacter(character_id)
-
-            timestamp = datetime.utcfromtimestamp(int(split[1]))
-            log_type = split[0]
-
             if log_type == 'B':
-                characters[character_id].birth = timestamp
-                characters[character_id].sex = split[4]
 
                 parent = split[6]
+                mom_id = None if parent == 'noParent' else parent.split('=')[1]
+                sex = split[4]
 
-                if parent == 'noParent':
-                    characters[character_id].mark_as_eve()
-                else:
-                    mom_id = parent.split('=')[1]
-
-                    if mom_id in characters:
-                        characters[mom_id].add_kid(character_id)
-                    else:
-                        print('ERROR: unknown mom: ' + mom_id)
+                history.record_birth(character_id, timestamp, mom_id, sex)
             elif log_type == 'D':
-                characters[character_id].death = timestamp
+                history.record_death(character_id, timestamp)
             else:
                 print('ERROR: unknown log type in ' + line)
 
-    return characters
+    return history
 
-
-def print_completeness_report(characters):
-    n_characters = len(characters)
-
-    n_incomplete_characters = len(incomplete_characters_from(characters))
-
-    percent_incomplete = float(n_incomplete_characters) / n_characters * 100
-
-    print("%s/%s = %.2f%% incomplete" % (n_incomplete_characters, n_characters, percent_incomplete))
-
-
-def incomplete_characters_from(characters):
-    return [c for c in characters.values() if not c.is_complete()]
-
-
-def delete_incomplete_characters(characters):
-    for character_id in [c.id for c in incomplete_characters_from(characters)]:
-        del characters[character_id]

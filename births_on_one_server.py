@@ -36,7 +36,7 @@ def create_stats_per_minute(characters, start, end):
     for m in round_minute_range(start, end):
         result[m] = Stats()
 
-    for character in characters.values():
+    for character in characters:
 
         result[round_minute(character.birth)].n_births += 1
 
@@ -69,9 +69,9 @@ def print_expected_kids(interesting_mom):
 
     births_per_mom = [minute_stats[minute].births_per_mom() for minute in minute_stats if minute in fertility_minutes]
 
-    expexted_kids = sum(births_per_mom)
+    expected_kids = sum(births_per_mom)
 
-    print("Expected number of kids during fertility period: %s" % expexted_kids)
+    print("Expected number of kids during fertility period: %s" % expected_kids)
 
 
 def create_plot(mom, data):
