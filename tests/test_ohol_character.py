@@ -1,9 +1,10 @@
 import unittest
-from datetime import datetime, timedelta
 
-from logreader.ohol_character import OholCharacter
+from datetimerange import DateTimeRange
 
-default_birth = datetime(2019, 1, 1)
+from logreader.ohol_character import FERTILE_END_EVE
+from tests.character_factories import *
+from tests.time_factories import minute
 
 
 class TestOholCharacter(unittest.TestCase):
@@ -87,52 +88,9 @@ class TestOholCharacter(unittest.TestCase):
     def test_male_is_not_considered_mom_with_girls(self):
         self.assertFalse(male().is_mom_with_girls())
 
+    def test_eve_fertility(self):
+        sut = eve()
 
-# noinspection PyTypeChecker
-def surviving_mom_with_daughter():
-    sut = female()
-    sut.add_kid(female(id='ABC'))
-    return sut
-
-
-def surviving_mom_with_only_boys():
-    sut = female()
-    sut.add_kid(male(id='DEF'))
-    return sut
-
-
-def surviving_mom_with_no_kids():
-    sut = female()
-    sut.add_kid(male(id='DEF'))
-    return sut
-
-
-def female(id='123', birth=default_birth, death=None):
-    sut = OholCharacter(id)
-    sut.birth = birth
-    sut.death = (birth + timedelta(minutes=60)) if death is None and birth is not None else death
-    sut.sex = 'F'
-    return sut
-
-
-def male(id='123', birth=default_birth, death=None):
-    sut = female(id, birth, death)
-    sut.sex = 'M'
-    return sut
-
-
-def make_character(param):
-    split = param.split()
-    character = OholCharacter(split[0])
-    character.sex = split[1]
-    character.birth = hour(split[2])
-    character.death = hour(split[3])
-    return character
-
-
-def minute(minute_string):
-    return hour('00:' + minute_string)
-
-
-def hour(hour_string):
-    return datetime.strptime('2019-01-01 %s' % hour_string, '%Y-%m-%d %H:%M:%S')
+        self.assertEqual(
+            DateTimeRange(sut.birth, sut.birth + FERTILE_END_EVE),
+            sut.fertility_period())

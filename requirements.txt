@@ -2,4 +2,4 @@ logreader
 requests
 pandas
 plotly
-pytest
+DateTimeRange

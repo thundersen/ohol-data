@@ -1,10 +1,13 @@
 from datetime import timedelta
 
+from datetimerange import DateTimeRange
+
 from timeutils.timeutils import round_minute_range
 
 
 FERTILE_START = timedelta(minutes=14)
 FERTILE_END = timedelta(minutes=40)
+FERTILE_END_EVE = timedelta(minutes=26)
 
 
 class OholCharacter:
@@ -18,8 +21,7 @@ class OholCharacter:
         self.is_eve = False
 
     def __str__(self):
-        return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death) \
-            + " | kids: " + ",".join(self.kids)
+        return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)
 
     def is_complete(self):
         return self.birth is not None and self.death is not None
@@ -31,10 +33,14 @@ class OholCharacter:
         return round_minute_range(self.fertility_start(), self.fertility_end())
 
     def fertility_end(self):
-        return min(self.death, self.birth + FERTILE_END)
+        actual_end = FERTILE_END if not self.is_eve else FERTILE_END_EVE
+        return min(self.death, self.birth + actual_end)
 
     def fertility_start(self):
-        return self.birth + FERTILE_START
+        return self.birth + FERTILE_START if not self.is_eve else self.birth
+
+    def fertility_period(self):
+        return DateTimeRange(self.fertility_start(), self.fertility_end())
 
     def add_kid(self, kid):
         self.kids.append(kid)
@@ -67,5 +73,3 @@ class OholCharacter:
 
     def is_surviving_mom(self):
         return self.sex == 'F' and self.has_outlived_fertility()
-
-
