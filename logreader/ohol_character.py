@@ -16,8 +16,6 @@ class OholCharacter:
         self.name = name
         self.kids = []
         self.is_eve = False
-        self.daughters = []
-        self.sons = []
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death) \
@@ -38,8 +36,19 @@ class OholCharacter:
     def fertility_start(self):
         return self.birth + FERTILE_START
 
-    def add_kid(self, kid_id):
-        self.kids.append(kid_id)
+    def add_kid(self, kid):
+        self.kids.append(kid)
+
+    def daughters(self):
+        return [k for k in self.kids if k.sex == 'F']
+
+    def sons(self):
+        return [k for k in self.kids if k.sex == 'M']
+
+    def descendants(self):
+        daughters_descendants = [descendant for daughter in self.daughters() for descendant in daughter.descendants()]
+
+        return self.kids + daughters_descendants
 
     def mark_as_eve(self):
         self.is_eve = True
@@ -50,20 +59,11 @@ class OholCharacter:
     def has_outlived_fertility(self):
         return self.is_complete() and (self.death - self.birth) > FERTILE_END
 
-    def read_kids(self, characters):
-        for kid_id in self.kids:
-            if characters[kid_id].sex == 'F':
-                self.daughters.append(kid_id)
-            elif characters[kid_id].sex == 'M':
-                self.sons.append(kid_id)
-            else:
-                print('ERROR: kid with unknown sex ' + characters[kid_id])
-
     def is_mom_with_girls(self):
         return self.is_surviving_mom() and self.has_daughters()
 
     def has_daughters(self):
-        return len(self.daughters) > 0
+        return len(self.daughters()) > 0
 
     def is_surviving_mom(self):
         return self.sex == 'F' and self.has_outlived_fertility()

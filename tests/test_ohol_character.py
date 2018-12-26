@@ -6,33 +6,6 @@ from logreader.ohol_character import OholCharacter
 default_birth = datetime(2019, 1, 1)
 
 
-# noinspection PyTypeChecker
-def surviving_mom_with_daughter():
-    sut = female()
-    sut.kids.append('ABC')
-    sut.read_kids({
-        'ABC': female(id='ABC')
-    })
-    return sut
-
-
-def surviving_mom_with_only_boys():
-    sut = female()
-    sut.kids = ['DEF']
-    sut.read_kids({
-        'DEF': male(id='DEF')
-    })
-    return sut
-
-
-def surviving_mom_with_no_kids():
-    sut = female()
-    sut.read_kids({
-        'DEF': male(id='DEF')
-    })
-    return sut
-
-
 class TestOholCharacter(unittest.TestCase):
     def test_is_complete_when_birth_and_death_present(self):
         sut = female()
@@ -113,6 +86,25 @@ class TestOholCharacter(unittest.TestCase):
 
     def test_male_is_not_considered_mom_with_girls(self):
         self.assertFalse(male().is_mom_with_girls())
+
+
+# noinspection PyTypeChecker
+def surviving_mom_with_daughter():
+    sut = female()
+    sut.add_kid(female(id='ABC'))
+    return sut
+
+
+def surviving_mom_with_only_boys():
+    sut = female()
+    sut.add_kid(male(id='DEF'))
+    return sut
+
+
+def surviving_mom_with_no_kids():
+    sut = female()
+    sut.add_kid(male(id='DEF'))
+    return sut
 
 
 def female(id='123', birth=default_birth, death=None):
