@@ -1,27 +1,23 @@
 from datetime import datetime
 
 from logreader.history import History
+from logreader.logfile_names import build_local_filenames_for_server_and_day
 
 
-def read_complete_characters(names_file, lifelog_file):
-    history = read_characters(names_file, lifelog_file)
+def read_characters(server, date):
 
-    history.print_completeness_report()
+    files = build_local_filenames_for_server_and_day(server, date)
 
-    return history.complete_characters()
-
-
-def read_characters(names_file, lifelog_file):
     history = History()
 
-    with open(names_file, "r") as file:
+    with open(files['names'], "r") as file:
         for line in file:
             split = line.split()
             character_id = split[0]
             name = " ".join(split[1:])
             history.record_name(character_id, name)
 
-    with open(lifelog_file, "r") as file:
+    with open(files['log'], "r") as file:
         for line in file:
             split = line.split()
 

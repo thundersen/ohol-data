@@ -1,3 +1,4 @@
+from datetime import date
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -5,10 +6,8 @@ import plotly.offline as py
 
 from logreader.reader import read_characters
 
-
-LOG = 'lifelogs/server02/2018_12December_18_Tuesday.txt'
-
-NAMES = 'lifelogs/server02/2018_12December_18_Tuesday_names.txt'
+SERVER = 3
+DATE = date(2018, 12, 18)
 
 
 def to_hours(duration):
@@ -25,7 +24,8 @@ def make_lineage_plot(history):
 
 
 if __name__ == '__main__':
-    history = read_characters(NAMES, LOG)
+
+    history = read_characters(SERVER, DATE)
 
     lineage_plot = make_lineage_plot(history)
 
