@@ -6,12 +6,14 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as py
 
-from logreader.reader import read_complete_characters
+from logreader.reader import read_characters
 from timeutils.timeutils import round_minute_range, round_minute
 
-LOG = 'lifelogs/server01/2018_12December_18_Tuesday.txt'
+SERVER = 2
 
-NAMES = 'lifelogs/server01/2018_12December_18_Tuesday_names.txt'
+LOG = 'lifelogs/server%s/2018_12December_18_Tuesday.txt' % str(SERVER).zfill(2)
+
+NAMES = 'lifelogs/server%s/2018_12December_18_Tuesday_names.txt' % str(SERVER).zfill(2)
 
 START = datetime(2018, 12, 18)
 
@@ -29,16 +31,17 @@ class Stats:
         return 0 if self.n_fertile_moms == 0 else float(self.n_births) / self.n_fertile_moms
 
 
-def create_stats_per_minute(characters, start, end):
+def create_stats_per_minute(history, start, end):
 
     result = {}
 
     for m in round_minute_range(start, end):
         result[m] = Stats()
 
-    for character in characters:
+    for character in history.complete_characters():
 
-        result[round_minute(character.birth)].n_births += 1
+        if not history.is_orphan(character.id):
+            result[round_minute(character.birth)].n_births += 1
 
         for minute in character.fertile_mom_minutes():
             result[minute].n_fertile_moms += 1
@@ -46,20 +49,27 @@ def create_stats_per_minute(characters, start, end):
     return result
 
 
-def arrange_plot_data(minute_stats):
+def arrange_plot_data(minute_stats, player_counts_per_minute):
 
-    matrix = [[m, stat.n_births, stat.n_fertile_moms, stat.births_per_mom()]
-              for m, stat in minute_stats.items()]
+    matrix = [[
+        m,
+        stat.n_births,
+        stat.n_fertile_moms,
+        stat.births_per_mom(),
+        player_counts_per_minute[m] if m in player_counts_per_minute else None
+    ] for m, stat in minute_stats.items()]
 
-    df = pd.DataFrame.from_records(matrix, index='time', columns=['time', 'births', 'fertile_moms', 'births_per_mom'])
+    df = pd.DataFrame.from_records(
+        matrix, index='time', columns=['time', 'births', 'fertile_moms', 'births_per_mom', 'player_count'])
 
     df_avg = df.resample("5T").mean().reset_index()
 
-    births = go.Scatter(x=df_avg['time'], y=df_avg['births'], name='births per minute')
-    mothers = go.Scatter(x=df_avg['time'], y=df_avg['fertile_moms'], name='fertile moms')
-    bpm = go.Scatter(x=df_avg['time'], y=df_avg['births_per_mom'], name='births per mom per minute')
+    player_count = go.Scatter(x=df_avg['time'], y=df_avg['player_count'], name='# players')
+    mothers = go.Scatter(x=df_avg['time'], y=df_avg['fertile_moms'], name='# fertile moms')
+    # births = go.Scatter(x=df_avg['time'], y=df_avg['births'], name='births per minute', yaxis='y2')
+    bpm = go.Scatter(x=df_avg['time'], y=df_avg['births_per_mom'], name='births per mom per minute', yaxis='y2')
 
-    return [births, mothers, bpm]
+    return [player_count, mothers, bpm]
 
 
 def print_expected_kids(interesting_mom):
@@ -98,11 +108,11 @@ def create_plot(mom, data):
 
 
 if __name__ == '__main__':
-    characters = read_complete_characters(NAMES, LOG)
+    history = read_characters(NAMES, LOG)
 
-    minute_stats = create_stats_per_minute(characters, START, END)
+    minute_stats = create_stats_per_minute(history, START, END)
 
-    plot_data = arrange_plot_data(minute_stats)
+    plot_data = arrange_plot_data(minute_stats, history.player_counts())
 
 #    interesting_mom = characters[INTERESTING_MOM_ID]
 
@@ -112,4 +122,15 @@ if __name__ == '__main__':
 
 #    create_plot(interesting_mom, plot_data)
 
-    py.plot(plot_data)
+    layout = dict(
+        title='Births on Server %s' % SERVER,
+        yaxis=dict(
+            title='# characters'
+        ),
+        yaxis2=dict(
+            title='births per minute',
+            overlaying='y',
+            side='right'
+        )
+    )
+    py.plot({'data': plot_data, 'layout': layout})

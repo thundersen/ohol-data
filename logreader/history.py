@@ -1,14 +1,17 @@
 from logreader.lineage import Lineage
 from logreader.ohol_character import OholCharacter
+from logreader.player_count_tracker import PlayerCountTracker
 
 
 class History:
     def __init__(self):
-        self.character_data = {}
-        self.lineage_data = {}
-        self.characters = {}
-        self.lineages = {}
-        self.incomplete = {}
+        self._character_data = {}
+        self._lineage_data = {}
+        self._characters = {}
+        self._lineages = {}
+        self._incomplete = {}
+        self._orphans = []
+        self._count_tracker = PlayerCountTracker()
 
     def record_name(self, character_id, name):
         character = self._find_or_create_character(character_id)
@@ -23,55 +26,71 @@ class History:
         self._record_relations(character, mom_id)
 
     def _find_or_create_character(self, character_id):
-        if character_id not in self.character_data:
-            self.character_data[character_id] = {
+        if character_id not in self._character_data:
+            self._character_data[character_id] = {
                 'id': character_id,
                 'kids': []
             }
-        return self.character_data[character_id]
+        return self._character_data[character_id]
 
     def _record_relations(self, character, mom_id):
         if mom_id is None:
             character['is_eve'] = True
-            self.lineage_data[character['id']] = {'eve': character}
-        elif mom_id in self.character_data:
-            mom = self.character_data[mom_id]
+            self._lineage_data[character['id']] = {'eve': character}
+        elif mom_id in self._character_data:
+            mom = self._character_data[mom_id]
             mom['kids'].append(character)
         else:
+            self._orphans.append(character['id'])
             print('ERROR: unknown mom %s for character %s born at %s' % (mom_id, character['id'], character['birth']))
 
     def record_death(self, character_id, timestamp):
         character = self._find_or_create_character(character_id)
         character['death'] = timestamp
 
-    def print_completeness_report(self):
-        total = len(self.character_data)
+    def record_player_count(self, timestamp, count):
+        self._count_tracker.record_player_count(timestamp, count)
 
-        n_incomplete = len(self.incomplete)
+    def print_completeness_report(self):
+        total = len(self._character_data)
+
+        n_incomplete = len(self._incomplete)
 
         percent_incomplete = float(n_incomplete) / total * 100
 
         print("%s/%s = %.2f%% incomplete" % (n_incomplete, total, percent_incomplete))
 
     def complete_characters(self):
-        return self.characters.values()
+        return self._characters.values()
 
     def all_lineages(self):
-        return self.lineages.values()
+        return self._lineages.values()
 
     def lineage(self, lineage_id):
-        return self.lineages[lineage_id]
+        return self._lineages[lineage_id]
 
     def character(self, character_id):
-        return self.characters[character_id]
+        return self._characters[character_id]
+
+    def is_orphan(self, character_id):
+        return character_id in self._orphans
+
+    def player_counts(self):
+        return self._count_tracker.player_counts()
 
     def write_all(self):
-        for character_id, data in self.character_data.items():
-            try:
-                self.characters[character_id] = OholCharacter(**data)
-            except KeyError:
-                self.incomplete[character_id] = data
+        self._write_characters()
+        self._write_lineages()
+        self._count_tracker.write_player_counts()
 
-        for eve_id, data in self.lineage_data.items():
-            if eve_id in self.characters:
-                self.lineages[eve_id] = Lineage(self.characters[eve_id])
+    def _write_lineages(self):
+        for eve_id, data in self._lineage_data.items():
+            if eve_id in self._characters:
+                self._lineages[eve_id] = Lineage(self._characters[eve_id])
+
+    def _write_characters(self):
+        for character_id, data in self._character_data.items():
+            try:
+                self._characters[character_id] = OholCharacter(**data)
+            except KeyError:
+                self._incomplete[character_id] = data

@@ -36,8 +36,10 @@ def read_characters(names_file, lifelog_file):
                 sex = split[4]
 
                 history.record_birth(character_id, timestamp, mom_id, sex)
+                _record_player_count(history, split[7], timestamp)
             elif log_type == 'D':
                 history.record_death(character_id, timestamp)
+                _record_player_count(history, split[8], timestamp)
             else:
                 print('ERROR: unknown log type in ' + line)
 
@@ -45,3 +47,7 @@ def read_characters(names_file, lifelog_file):
 
     return history
 
+
+def _record_player_count(history, count_element, timestamp):
+    player_count = int(count_element.split('=')[1])
+    history.record_player_count(timestamp, player_count)
