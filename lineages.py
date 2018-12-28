@@ -17,17 +17,16 @@ def to_hours(duration):
     return delta.days * 24 + float(delta.seconds) / 3600
 
 
+def make_lineage_plot(history):
+    lineages = history.all_lineages()
+    matrix = [[l.id(), l.duration().end_datetime, to_hours(l.duration())] for l in lineages]
+    df = pd.DataFrame.from_records(matrix, index='id', columns=['id', 'death', 'lifespan_hours'])
+    return go.Scatter(x=df['death'], y=df['lifespan_hours'], mode='markers', name='ending lineages')
+
+
 if __name__ == '__main__':
     history = read_characters(NAMES, LOG)
 
-    lineages = history.all_lineages()
+    lineage_plot = make_lineage_plot(history)
 
-    matrix = [[l.id(), l.duration().end_datetime, to_hours(l.duration())] for l in lineages]
-
-    df = pd.DataFrame.from_records(matrix, index='id', columns=['id', 'death', 'lifespan_hours'])
-
-    print(df.describe())
-
-    data = [go.Scatter(x=df['death'], y=df['lifespan_hours'], mode = 'markers')]
-
-    py.plot(data, filename='horizontal histogram')
+    py.plot([lineage_plot])

@@ -114,14 +114,6 @@ if __name__ == '__main__':
 
     plot_data = arrange_plot_data(minute_stats, history.player_counts())
 
-#    interesting_mom = characters[INTERESTING_MOM_ID]
-
-#    print(interesting_mom)
-
-#    print_expected_kids(interesting_mom)
-
-#    create_plot(interesting_mom, plot_data)
-
     layout = dict(
         title='Births on Server %s' % SERVER,
         yaxis=dict(
@@ -134,3 +126,12 @@ if __name__ == '__main__':
         )
     )
     py.plot({'data': plot_data, 'layout': layout})
+
+#    interesting_mom = characters[INTERESTING_MOM_ID]
+
+#    print(interesting_mom)
+
+#    print_expected_kids(interesting_mom)
+#    create_plot(interesting_mom, plot_data)
+
+
