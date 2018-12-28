@@ -12,18 +12,9 @@ NAMES = 'lifelogs/server02/2018_12December_18_Tuesday_names.txt'
 
 
 def to_hours(duration):
-    if duration is None:
-        return 0
-
     delta = (duration.end_datetime - duration.start_datetime)
 
     return delta.days * 24 + float(delta.seconds) / 3600
-
-
-def death(duration):
-    if duration is None:
-        return None
-    return duration.end_datetime
 
 
 if __name__ == '__main__':
@@ -31,7 +22,7 @@ if __name__ == '__main__':
 
     lineages = history.all_lineages()
 
-    matrix = [[l.id(), death(l.duration()), to_hours(l.duration())] for l in lineages]
+    matrix = [[l.id(), l.duration().end_datetime, to_hours(l.duration())] for l in lineages]
 
     df = pd.DataFrame.from_records(matrix, index='id', columns=['id', 'death', 'lifespan_hours'])
 

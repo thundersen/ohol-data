@@ -17,9 +17,9 @@ class TestLineage(unittest.TestCase):
     def test_duration_is_eve_birth_to_max_fertility_end_of_girls(self):
         e = eve()
         daughter = female(birth=e.birth + timedelta(minutes=5))
-        e.add_kid(daughter)
+        e.kids.append(daughter)
         granddaughter = female(birth=daughter.birth + timedelta(minutes=20))
-        daughter.add_kid(granddaughter)
+        daughter.kids.append(granddaughter)
 
         sut = Lineage(e)
 

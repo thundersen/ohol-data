@@ -41,5 +41,7 @@ def read_characters(names_file, lifelog_file):
             else:
                 print('ERROR: unknown log type in ' + line)
 
+    history.write_all()
+
     return history
 

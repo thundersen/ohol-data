@@ -11,14 +11,15 @@ FERTILE_END_EVE = timedelta(minutes=26)
 
 
 class OholCharacter:
-    def __init__(self, id, name='[UNKNOWN]'):
-        self.sex = None
-        self.death = None
-        self.birth = None
-        self.id = id
+    def __init__(self, name='[UNKNOWN]', is_eve=False, kids=None, **kwargs):
+        self.id = kwargs['id']
         self.name = name
-        self.kids = []
-        self.is_eve = False
+        self.sex = kwargs['sex']
+        self.birth = kwargs['birth']
+        self.death = kwargs['death']
+        self.is_eve = is_eve
+        # create a copy for each kid as long as memory is not a concern
+        self.kids = [OholCharacter(**k) for k in kids] if kids is not None else []
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)
@@ -42,9 +43,6 @@ class OholCharacter:
     def fertility_period(self):
         return DateTimeRange(self.fertility_start(), self.fertility_end())
 
-    def add_kid(self, kid):
-        self.kids.append(kid)
-
     def daughters(self):
         return [k for k in self.kids if k.sex == 'F']
 
@@ -55,9 +53,6 @@ class OholCharacter:
         daughters_descendants = [descendant for daughter in self.daughters() for descendant in daughter.descendants()]
 
         return self.kids + daughters_descendants
-
-    def mark_as_eve(self):
-        self.is_eve = True
 
     def is_zero_girl_mom(self):
         return self.is_surviving_mom() and not self.has_daughters()

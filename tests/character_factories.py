@@ -8,33 +8,35 @@ default_birth = datetime(2019, 1, 1)
 
 def surviving_mom_with_daughter():
     sut = female()
-    sut.add_kid(female(id='ABC'))
+    sut.kids.append(female(id='ABC'))
     return sut
 
 
 def surviving_mom_with_only_boys():
     sut = female()
-    sut.add_kid(male(id='DEF'))
+    sut.kids.append(male(id='DEF'))
     return sut
 
 
 def surviving_mom_with_no_kids():
     sut = female()
-    sut.add_kid(male(id='DEF'))
+    sut.kids.append(male(id='DEF'))
     return sut
 
 
 def female(id='123', birth=default_birth, death=None):
-    sut = OholCharacter(id)
-    sut.birth = birth
-    sut.death = (birth + timedelta(minutes=60)) if death is None and birth is not None else death
-    sut.sex = 'F'
-    return sut
+    data = {
+        'id': id,
+        'sex': 'F',
+        'birth': birth,
+        'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death
+    }
+    return OholCharacter(**data)
 
 
 def eve(id='123', birth=default_birth, death=None):
     sut = female(id, birth, death)
-    sut.mark_as_eve()
+    sut.is_eve = True
     return sut
 
 
@@ -46,8 +48,10 @@ def male(id='123', birth=default_birth, death=None):
 
 def make_character(param):
     split = param.split()
-    character = OholCharacter(split[0])
-    character.sex = split[1]
-    character.birth = hour(split[2])
-    character.death = hour(split[3])
-    return character
+    data = {
+        'id': split[0],
+        'sex': split[1],
+        'birth': hour(split[2]),
+        'death': hour(split[3])
+    }
+    return OholCharacter(**data)
