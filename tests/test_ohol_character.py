@@ -35,16 +35,16 @@ class TestOholCharacter(unittest.TestCase):
 
         minutes = [m.minute for m in sut.fertile_mom_minutes()]
 
-        self.assertSequenceEqual(range(14, 40), minutes)
+        self.assertSequenceEqual(range(14, 40+1), minutes)
 
     def test_fertile_minutes_are_round(self):
         sut = female(birth=minute('01:27'))
 
         result = sut.fertile_mom_minutes()
 
-        seconds = [m.second for m in result]
+        seconds = list(set([m.second for m in result]))
 
-        self.assertListEqual(26 * [0], seconds)
+        self.assertSequenceEqual([0], seconds)
 
     def test_died_as_kid_has_no_fertile_minutes(self):
         sut = female(death=default_birth + timedelta(minutes=13))
@@ -56,7 +56,7 @@ class TestOholCharacter(unittest.TestCase):
 
         minutes = [m.minute for m in sut.fertile_mom_minutes()]
 
-        self.assertSequenceEqual(range(14, 20), minutes)
+        self.assertSequenceEqual(range(14, 20+1), minutes)
 
     def test_mom_survived_fertility_with_no_kids_is_0girls(self):
         self.assertTrue(surviving_mom_with_no_kids().is_zero_girl_mom())
