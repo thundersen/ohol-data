@@ -7,7 +7,7 @@ DATE = date(2018, 12, 18)
 
 
 if __name__ == '__main__':
-    history = read_characters(SERVER, DATE)
+    history = read_characters([SERVER], DATE, DATE)
 
     zero_daughters = [x for x in history.complete_characters() if x.is_zero_girl_mom()]
 

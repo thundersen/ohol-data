@@ -25,7 +25,7 @@ def build_local_filenames_for_server_and_day(server_no, day):
 def build_filenames_for_server_and_day(server_no, day):
     server_dir = f'lifeLog_server{server_no}.onehouronelife.com'
     month_part = f'{day.month}{day.strftime("%B")}'
-    day_part = f'{day.day}_{day.strftime("%A")}'
+    day_part = f'{day.strftime("%d")}_{day.strftime("%A")}'
 
     prefix = f'{server_dir}/{day.year}_{month_part}_{day_part}'
 

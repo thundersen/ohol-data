@@ -105,7 +105,7 @@ def create_plot(mom, data):
 
 if __name__ == '__main__':
 
-    history = read_characters(SERVER, START)
+    history = read_characters([SERVER], START, START)
 
     minute_stats = create_stats_per_minute(history, START, END)
 
