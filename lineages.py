@@ -6,8 +6,8 @@ import plotly.offline as py
 
 from logreader.reader import read_characters
 
-SERVER = 3
-DATE = date(2018, 12, 18)
+SERVER = 1
+DATE = date(2018, 12, 28)
 
 
 def to_hours(duration):
@@ -29,4 +29,14 @@ if __name__ == '__main__':
 
     lineage_plot = make_lineage_plot(history)
 
-    py.plot([lineage_plot])
+    layout = dict(
+        title='Lineages on Server %s at %s' % (SERVER, DATE),
+        yaxis=dict(
+            title='lineage duration in hours'
+        ),
+        xaxis=dict(
+            title='time the lineage ended (last mom becomes infertile)'
+        )
+    )
+
+    py.plot({'data': [lineage_plot], 'layout': layout })
