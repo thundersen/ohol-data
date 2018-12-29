@@ -11,15 +11,14 @@ FERTILE_END_EVE = timedelta(minutes=26)
 
 
 class Character:
-    def __init__(self, name='[UNKNOWN]', is_eve=False, kids=None, **kwargs):
-        self.id = kwargs['id']
+    def __init__(self, kids, name='[UNKNOWN]', is_eve=False, **kwargs):
+        self.kids = kids
         self.name = name
+        self.id = kwargs['id']
         self.sex = kwargs['sex']
         self.birth = kwargs['birth']
         self.death = kwargs['death']
         self.is_eve = is_eve
-        # create a copy for each kid as long as memory is not a concern
-        self.kids = [Character(**k) for k in kids] if kids is not None else []
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)

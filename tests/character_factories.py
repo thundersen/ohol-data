@@ -31,7 +31,7 @@ def female(id='123', birth=default_birth, death=None):
         'birth': birth,
         'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death
     }
-    return Character(**data)
+    return Character(kids=[], **data)
 
 
 def eve(id='123', birth=default_birth, death=None):

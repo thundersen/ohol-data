@@ -29,7 +29,7 @@ class History:
         if character_id not in self._character_data:
             self._character_data[character_id] = {
                 'id': character_id,
-                'kids': []
+                'kids_data': []
             }
         return self._character_data[character_id]
 
@@ -39,7 +39,7 @@ class History:
             self._lineage_data[character['id']] = {'eve': character}
         elif mom_id in self._character_data:
             mom = self._character_data[mom_id]
-            mom['kids'].append(character)
+            mom['kids_data'].append(character)
         else:
             self._orphans.append(character['id'])
             print('ERROR: unknown mom %s for character %s born at %s' % (mom_id, character['id'], character['birth']))
@@ -89,8 +89,18 @@ class History:
                 self._lineages[eve_id] = Lineage(self._characters[eve_id])
 
     def _write_characters(self):
-        for character_id, data in self._character_data.items():
+        for character_id, data in self._reversed_character_data_items():
             try:
-                self._characters[character_id] = Character(**data)
+                kids = [self._characters[kid_id] for kid_id in [kid_data['id'] for kid_data in data['kids_data']]]
+                self._characters[character_id] = Character(kids=kids, **data)
             except KeyError:
                 self._incomplete[character_id] = data
+
+    def _reversed_character_data_items(self):
+        """
+        assuming that kids have been entered *after* mothers, reversing ensures that kids
+        are processed *before* mothers.
+        hence there are already Character instances for kids, which can be referenced by mothers.
+        referencing avoids having to create additional instances for kids inside of mothers recursively.
+        """
+        return sorted(list(self._character_data.items()), key=lambda x: x[0].lower(), reverse=True)
