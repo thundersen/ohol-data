@@ -37,10 +37,7 @@ def create_stats_per_minute(history, start, end):
     for character in history.complete_characters():
 
         if not history.is_orphan(character.id):
-            try:
-                result[round_minute(character.birth)].n_births += 1
-            except KeyError:
-                print("")
+            result[round_minute(character.birth)].n_births += 1
 
         for minute in character.fertile_mom_minutes():
             result[minute].n_fertile_moms += 1
