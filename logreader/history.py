@@ -1,5 +1,5 @@
 from logreader.lineage import Lineage
-from logreader.ohol_character import OholCharacter
+from logreader.character import Character
 from logreader.player_count_tracker import PlayerCountTracker
 
 
@@ -91,6 +91,6 @@ class History:
     def _write_characters(self):
         for character_id, data in self._character_data.items():
             try:
-                self._characters[character_id] = OholCharacter(**data)
+                self._characters[character_id] = Character(**data)
             except KeyError:
                 self._incomplete[character_id] = data

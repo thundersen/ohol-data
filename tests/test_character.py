@@ -2,12 +2,12 @@ import unittest
 
 from datetimerange import DateTimeRange
 
-from logreader.ohol_character import FERTILE_END_EVE
+from logreader.character import FERTILE_END_EVE
 from tests.character_factories import *
 from tests.time_factories import minute
 
 
-class TestOholCharacter(unittest.TestCase):
+class TestCharacter(unittest.TestCase):
     def test_is_complete_when_birth_and_death_present(self):
         sut = female()
 

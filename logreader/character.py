@@ -10,7 +10,7 @@ FERTILE_END = timedelta(minutes=40)
 FERTILE_END_EVE = timedelta(minutes=26)
 
 
-class OholCharacter:
+class Character:
     def __init__(self, name='[UNKNOWN]', is_eve=False, kids=None, **kwargs):
         self.id = kwargs['id']
         self.name = name
@@ -19,7 +19,7 @@ class OholCharacter:
         self.death = kwargs['death']
         self.is_eve = is_eve
         # create a copy for each kid as long as memory is not a concern
-        self.kids = [OholCharacter(**k) for k in kids] if kids is not None else []
+        self.kids = [Character(**k) for k in kids] if kids is not None else []
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)

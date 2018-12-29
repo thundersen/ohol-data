@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from logreader.ohol_character import OholCharacter
+from logreader.character import Character
 from tests.time_factories import hour
 
 default_birth = datetime(2019, 1, 1)
@@ -31,7 +31,7 @@ def female(id='123', birth=default_birth, death=None):
         'birth': birth,
         'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death
     }
-    return OholCharacter(**data)
+    return Character(**data)
 
 
 def eve(id='123', birth=default_birth, death=None):
@@ -54,4 +54,4 @@ def make_character(param):
         'birth': hour(split[2]),
         'death': hour(split[3])
     }
-    return OholCharacter(**data)
+    return Character(**data)
