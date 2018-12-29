@@ -1,5 +1,5 @@
-logreader
 requests
 pandas
 plotly
 DateTimeRange
+memory-profiler
