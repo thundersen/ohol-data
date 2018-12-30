@@ -48,8 +48,8 @@ class History:
         character = self._find_or_create_character(character_id)
         character['death'] = timestamp
 
-    def record_player_count(self, timestamp, count):
-        self._count_tracker.record_player_count(timestamp, count)
+    def record_player_count(self, timestamp, count, server_no):
+        self._count_tracker.record_player_count(timestamp, count, server_no)
 
     def print_completeness_report(self):
         total = len(self._character_data)
@@ -75,7 +75,7 @@ class History:
     def is_orphan(self, character_id):
         return character_id in self._orphans
 
-    def player_counts(self):
+    def total_player_counts(self):
         return self._count_tracker.player_counts()
 
     def write_all(self):

@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     minute_stats = create_stats_per_minute(history, START, END)
 
-    plot_data = arrange_plot_data(minute_stats, history.player_counts())
+    plot_data = arrange_plot_data(minute_stats, history.total_player_counts())
 
     layout = dict(
         title='Births on Server %s' % SERVER,

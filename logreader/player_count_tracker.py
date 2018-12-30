@@ -12,25 +12,41 @@ class PlayerCountTracker:
         self._raw_player_counts = {}
         self._player_counts = {}
 
-    def record_player_count(self, timestamp, count):
-        self._raw_player_counts[timestamp] = count
+    def record_player_count(self, timestamp, count, server_no):
+        if server_no not in self._raw_player_counts:
+            self._raw_player_counts[server_no] = {}
+
+        self._raw_player_counts[server_no][timestamp] = count
 
     def player_counts(self):
         return self._player_counts
 
     def write_player_counts(self):
-        n_counts_per_minute = {}
 
-        for time, count in self._raw_player_counts.items():
-            minute = round_minute(time)
+        counts_per_minute_per_server = {}
 
-            if minute not in n_counts_per_minute:
-                n_counts_per_minute[minute] = 0
+        for server, counts in self._raw_player_counts.items():
 
-            if minute not in self._player_counts:
-                self._player_counts[minute] = count
-            else:
-                self._player_counts[minute] = \
-                    _current_average(count, self._player_counts[minute], n_counts_per_minute[minute])
+            n_counts_per_minute = {}
 
-            n_counts_per_minute[minute] += 1
+            for time, count in counts.items():
+
+                minute = round_minute(time)
+
+                if minute not in n_counts_per_minute:
+                    n_counts_per_minute[minute] = 0
+
+                if minute not in counts_per_minute_per_server:
+                    counts_per_minute_per_server[minute] = {}
+
+                if server not in counts_per_minute_per_server[minute]:
+                    counts_per_minute_per_server[minute][server] = count
+                else:
+                    avg_before = counts_per_minute_per_server[minute][server]
+                    counts_per_minute_per_server[minute][server] = \
+                        _current_average(count, avg_before, n_counts_per_minute[minute])
+
+                n_counts_per_minute[minute] += 1
+
+        for minute, server_counts in counts_per_minute_per_server.items():
+            self._player_counts[minute] = sum(server_counts.values())

@@ -76,10 +76,10 @@ def _record_log_line(history, line, server_no):
         sex = split[4]
 
         history.record_birth(character_id, timestamp, mom_id, sex)
-        _record_player_count(history, split[7], timestamp)
+        _record_player_count(history, split[7], timestamp, server_no)
     elif log_type == 'D':
         history.record_death(character_id, timestamp)
-        _record_player_count(history, split[8], timestamp)
+        _record_player_count(history, split[8], timestamp, server_no)
     else:
         print('ERROR: unknown log type in ' + line)
 
@@ -91,6 +91,6 @@ def _record_names_line(history, line, server_no):
     history.record_name(character_id, name)
 
 
-def _record_player_count(history, count_element, timestamp):
+def _record_player_count(history, count_element, timestamp, server_no):
     player_count = int(count_element.split('=')[1])
-    history.record_player_count(timestamp, player_count)
+    history.record_player_count(timestamp, player_count, server_no)
