@@ -6,8 +6,8 @@ import plotly.offline as py
 
 from logreader.reader import read_characters
 
-SERVERS = [1, 2, 3, 4]
-FROM_DATE = date(2018, 10, 1)
+SERVERS = [1, 2, 3, 4, 5, 6, 7]
+FROM_DATE = date(2018, 8, 1)
 TO_DATE = date(2018, 12, 28)
 
 # SERVERS = [1]
