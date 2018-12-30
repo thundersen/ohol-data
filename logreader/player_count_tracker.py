@@ -23,8 +23,16 @@ class PlayerCountTracker:
 
     def write_player_counts(self):
 
-        counts_per_minute_per_server = {}
+        counts_per_minute_per_server = self._calculate_counts_per_minute_per_server()
 
+        for minute, server_counts in counts_per_minute_per_server.items():
+            self._player_counts[minute] = {'total': sum(server_counts.values())}
+
+            for server in server_counts:
+                self._player_counts[minute][f'server{server:02d}'] = server_counts[server]
+
+    def _calculate_counts_per_minute_per_server(self):
+        counts_per_minute_per_server = {}
         for server, counts in self._raw_player_counts.items():
 
             n_counts_per_minute = {}
@@ -47,6 +55,4 @@ class PlayerCountTracker:
                         _current_average(count, avg_before, n_counts_per_minute[minute])
 
                 n_counts_per_minute[minute] += 1
-
-        for minute, server_counts in counts_per_minute_per_server.items():
-            self._player_counts[minute] = sum(server_counts.values())
+        return counts_per_minute_per_server

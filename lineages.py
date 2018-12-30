@@ -6,8 +6,8 @@ import plotly.offline as py
 
 from logreader.reader import read_characters
 
-SERVERS = [1, 2, 3, 4, 5, 6, 7]
-FROM_DATE = date(2018, 8, 1)
+SERVERS = [1]
+FROM_DATE = date(2018, 12, 28)
 TO_DATE = date(2018, 12, 28)
 
 # SERVERS = [1]
@@ -43,7 +43,7 @@ def make_lineage_trace(lineages):
 
 
 def make_player_trace(player_counts_dict):
-    matrix = [[minute, count] for minute, count in player_counts_dict.items()]
+    matrix = [[minute, count['total']] for minute, count in player_counts_dict.items()]
 
     df = pd.DataFrame.from_records(matrix, index='time', columns=['time', 'count'])
 
