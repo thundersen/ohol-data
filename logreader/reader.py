@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from logreader.history import History
@@ -42,6 +43,10 @@ def _read(history, line, reading_func, filename, server_no):
 
 
 def _record_players_from_names(filename, history, server_no):
+    if not os.path.exists(filename):
+        print('WARNING: file not found ' + filename)
+        return
+
     with open(filename, "r") as file:
 
         if not _has_players(file):
@@ -54,6 +59,10 @@ def _record_players_from_names(filename, history, server_no):
 
 
 def _record_events_from_log(filename, history, server_no):
+    if not os.path.exists(filename):
+        print('WARNING: file not found ' + filename)
+        return
+
     with open(filename, "r") as file:
         for line in file:
             _read(history, line, _record_log_line, filename, server_no)
