@@ -22,6 +22,7 @@ class History:
 
         character['birth'] = at
         character['sex'] = sex
+        character['mom_id'] = mom_id
 
         self._record_relations(character, mom_id)
 

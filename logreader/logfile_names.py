@@ -1,7 +1,8 @@
 from timeutils.timeutils import date_range
 
+from os.path import join, dirname, realpath
 
-LOCAL_DIR = '../lifelogs'
+LOCAL_DIR = join(dirname(realpath(__file__)), '..', 'lifelogs')
 
 
 def build_names(servers, start_date, end_date):

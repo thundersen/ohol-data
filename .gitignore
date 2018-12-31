@@ -6,3 +6,4 @@ env/
 lifelogs/
 **/*.iml
 __pycache__/
+*.zip

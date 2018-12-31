@@ -8,8 +8,8 @@ from logreader.logfile_names import build_names, LOCAL_DIR
 
 SERVERS = [1, 2, 3, 4, 5, 6, 7]
 
-START_DATE = date(2018, 8, 1)
-END_DATE = date(2018, 9, 30)
+START_DATE = date(2018, 12, 29)
+END_DATE = date(2018, 12, 30)
 
 BASE_URL = 'http://onehouronelife.com/publicLifeLogData/'
 
