@@ -1,7 +1,7 @@
 from timeutils.timeutils import date_range
 
 
-LOCAL_DIR = 'lifelogs'
+LOCAL_DIR = '../lifelogs'
 
 
 def build_names(servers, start_date, end_date):
