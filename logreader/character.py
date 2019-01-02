@@ -17,6 +17,7 @@ class Character:
         self.id = kwargs['id']
         self.sex = kwargs['sex']
         self.birth = kwargs['birth']
+        self.birth_coordinates = kwargs['birth_coordinates']
         self.death = kwargs['death']
         self.is_eve = is_eve
         self.mom_id = kwargs['mom_id']

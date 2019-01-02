@@ -17,10 +17,11 @@ class History:
         character = self._find_or_create_character(character_id)
         character['name'] = name
 
-    def record_birth(self, character_id, at, mom_id, sex):
+    def record_birth(self, character_id, at, mom_id, sex, coordinates):
         character = self._find_or_create_character(character_id)
 
         character['birth'] = at
+        character['birth_coordinates'] = coordinates
         character['sex'] = sex
         character['mom_id'] = mom_id
 

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from logreader.character import Character
+from logreader.coordinates import Coordinates
 from tests.time_factories import hour
 
 default_birth = datetime(2019, 1, 1)
@@ -27,8 +28,10 @@ def surviving_mom_with_no_kids():
 def female(id='123', birth=default_birth, death=None):
     data = {
         'id': id,
+        'mom_id': None,
         'sex': 'F',
         'birth': birth,
+        'birth_coordinates': Coordinates(0, 0),
         'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death
     }
     return Character(kids=[], **data)

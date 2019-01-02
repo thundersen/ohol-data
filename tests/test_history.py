@@ -1,6 +1,7 @@
 import unittest
 from datetime import datetime, timedelta
 
+from logreader.coordinates import Coordinates
 from logreader.history import History
 from tests.test_timeutils import second
 
@@ -120,5 +121,5 @@ class TestHistory(unittest.TestCase):
                           birth=default_birth,
                           death=default_birth + timedelta(minutes=60),
                           mom_id=None):
-        self.sut.record_birth(character_id, birth, mom_id, sex)
+        self.sut.record_birth(character_id, birth, mom_id, sex, Coordinates(0, 0))
         self.sut.record_death(character_id, death)

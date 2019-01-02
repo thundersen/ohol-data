@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+from logreader.coordinates import Coordinates
 from logreader.history import History
 from logreader.logfile_names import build_local_filenames_for_server_and_day
 from timeutils.timeutils import date_range
@@ -72,6 +73,11 @@ def _server_specific_id_from(raw_id, server_no):
     return f'{server_no}_{raw_id}'
 
 
+def _coordinates_from(coordinates_string):
+    split = coordinates_string.strip('()').split(',')
+    return Coordinates(int(split[0]), int(split[1]))
+
+
 def _record_log_line(history, line, server_no):
     split = line.split()
     log_type = split[0]
@@ -83,8 +89,9 @@ def _record_log_line(history, line, server_no):
         parent = split[6]
         mom_id = None if parent == 'noParent' else _server_specific_id_from(parent.split('=')[1], server_no)
         sex = split[4]
+        coordinates = _coordinates_from(split[5])
 
-        history.record_birth(character_id, timestamp, mom_id, sex)
+        history.record_birth(character_id, timestamp, mom_id, sex, coordinates)
         _record_player_count(history, split[7], timestamp, server_no)
     elif log_type == 'D':
         history.record_death(character_id, timestamp)
