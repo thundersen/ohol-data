@@ -92,11 +92,27 @@ class History:
 
     def _write_characters(self):
         for character_id, data in self._reversed_character_data_items():
+
+            kids = [k for k in [self._try_find_kid(kid_data['id']) for kid_data in data['kids_data']] if k is not None]
+
             try:
-                kids = [self._characters[kid_id] for kid_id in [kid_data['id'] for kid_data in data['kids_data']]]
                 self._characters[character_id] = Character(kids=kids, **data)
-            except KeyError:
-                self._incomplete[character_id] = data
+            except KeyError as e:
+                self._write_incomplete(character_id, data, e)
+
+    def _write_incomplete(self, character_id, data, error):
+        birth_str = data['birth'] if 'birth' in data else '[UNKNOWN BIRTH]'
+        death_str = data['death'] if 'death' in data else '[UNKNOWN DEATH]'
+        print(f'ERROR: missing data for {character_id} {birth_str}-{death_str}: {error}')
+        self._incomplete[character_id] = data
+
+    def _try_find_kid(self, kid_id):
+        try:
+            return self._characters[kid_id]
+        except KeyError:
+            reason = 'incomplete' if kid_id in self._incomplete else 'unknown'
+
+            print(f'WARNING: ignoring {reason} kid {kid_id}')
 
     def _reversed_character_data_items(self):
         """
