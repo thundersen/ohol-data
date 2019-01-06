@@ -103,7 +103,8 @@ class History:
     def _write_incomplete(self, character_id, data, error):
         birth_str = data['birth'] if 'birth' in data else '[UNKNOWN BIRTH]'
         death_str = data['death'] if 'death' in data else '[UNKNOWN DEATH]'
-        print(f'ERROR: missing data for {character_id} {birth_str}-{death_str}: {error}')
+        name_str = data['name'] if 'name' in data else '[UNKNOWN NAME]'
+        print(f'ERROR: missing data for {name_str} {character_id} {birth_str}-{death_str}: {error}')
         self._incomplete[character_id] = data
 
     def _try_find_kid(self, kid_id):
