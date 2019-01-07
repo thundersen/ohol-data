@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from logreader.lineage import Lineage
 from logreader.character import Character
+from logreader.player import Player
 from logreader.player_count_tracker import PlayerCountTracker
 
 
@@ -9,46 +12,69 @@ class History:
         self._lineage_data = {}
         self._characters = {}
         self._lineages = {}
+        self._players = {}
         self._incomplete = {}
         self._orphans = []
         self._count_tracker = PlayerCountTracker()
 
     def record_name(self, character_id, name):
-        character = self._find_or_create_character(character_id)
+        character = self._find_or_create_character(character_id, 'name', name)
         character['name'] = name
 
-    def record_birth(self, character_id, at, mom_id, sex, coordinates):
-        character = self._find_or_create_character(character_id)
+    def record_birth(self, character_id, at, mom_id, sex, coordinates, player):
+        character = self._find_or_create_character(character_id, 'birth', at)
 
         character['birth'] = at
         character['birth_coordinates'] = coordinates
         character['sex'] = sex
         character['mom_id'] = mom_id
+        character['player'] = player
 
-        self._record_relations(character, mom_id)
+        if mom_id is None:
+            character['is_eve'] = True
+            self._lineage_data[character['id']] = {'eve': character}
+        else:
+            self._record_relations(character, mom_id)
 
-    def _find_or_create_character(self, character_id):
+    def record_death(self, character_id, timestamp):
+        character = self._find_or_create_character(character_id, 'death', timestamp)
+        character['death'] = timestamp
+
+    def _find_or_create_character(self, character_id, new_key, new_value):
+
         if character_id not in self._character_data:
             self._character_data[character_id] = {
                 'id': character_id,
                 'kids_data': []
             }
-        return self._character_data[character_id]
+            return self._character_data[character_id]
+
+        character = self._character_data[character_id]
+
+        if new_key not in character:
+            return character
+
+        new_id = character_id + 'd'
+        print(f'ERROR: duplicate id {character_id} - first birth: {character[new_key]}, second: {new_value}')
+        print(f'       assigning new ID {new_id}')
+
+        return self._find_or_create_character(new_id, new_key, new_value)
 
     def _record_relations(self, character, mom_id):
-        if mom_id is None:
-            character['is_eve'] = True
-            self._lineage_data[character['id']] = {'eve': character}
-        elif mom_id in self._character_data:
+
+        if mom_id in self._character_data:
             mom = self._character_data[mom_id]
+            if ('death' in mom and mom['death'] < character['birth']) or \
+                    ('birth' in mom and character['birth'] - mom['birth'] > timedelta(minutes=40)):
+                print(f'WARNING: implausible mom {mom_id} {mom["birth"]}-{mom["death"]} '
+                      f'for {character["id"]}. Assuming duplicate ID')
+                self._record_relations(character, mom_id + 'd')
+                return
+
             mom['kids_data'].append(character)
         else:
             self._orphans.append(character['id'])
             print('ERROR: unknown mom %s for character %s born at %s' % (mom_id, character['id'], character['birth']))
-
-    def record_death(self, character_id, timestamp):
-        character = self._find_or_create_character(character_id)
-        character['death'] = timestamp
 
     def record_player_count(self, timestamp, count, server_no):
         self._count_tracker.record_player_count(timestamp, count, server_no)
@@ -68,6 +94,9 @@ class History:
     def all_lineages(self):
         return self._lineages.values()
 
+    def all_players(self):
+        return self._players.values()
+
     def lineage(self, lineage_id):
         return self._lineages[lineage_id]
 
@@ -83,12 +112,19 @@ class History:
     def write_all(self):
         self._write_characters()
         self._write_lineages()
+        self._write_players()
         self._count_tracker.write_player_counts()
 
     def _write_lineages(self):
         for eve_id, data in self._lineage_data.items():
             if eve_id in self._characters:
                 self._lineages[eve_id] = Lineage(self._characters[eve_id])
+
+    def _write_players(self):
+        for character_id, character in self._characters.items():
+            if character.player not in self._players:
+                self._players[character.player] = Player(character.player)
+            self._players[character.player].add_character(character)
 
     def _write_characters(self):
         for character_id, data in self._reversed_character_data_items():

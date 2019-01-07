@@ -21,6 +21,7 @@ class Character:
         self.death = kwargs['death']
         self.is_eve = is_eve
         self.mom_id = kwargs['mom_id']
+        self.player = kwargs['player']
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)

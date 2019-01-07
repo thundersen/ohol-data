@@ -64,7 +64,7 @@ def _record_events_from_log(filename, history, server_no):
         print('WARNING: file not found ' + filename)
         return
 
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8", errors='ignore') as file:
         for line in file:
             _read(history, line, _record_log_line, filename, server_no)
 
@@ -86,12 +86,13 @@ def _record_log_line(history, line, server_no):
 
     if log_type == 'B':
 
+        player_sha1 = split[3]
+        sex = split[4]
         parent = split[6]
         mom_id = None if parent == 'noParent' else _server_specific_id_from(parent.split('=')[1], server_no)
-        sex = split[4]
         coordinates = _coordinates_from(split[5])
 
-        history.record_birth(character_id, timestamp, mom_id, sex, coordinates)
+        history.record_birth(character_id, timestamp, mom_id, sex, coordinates, player_sha1)
         _record_player_count(history, split[7], timestamp, server_no)
     elif log_type == 'D':
         history.record_death(character_id, timestamp)

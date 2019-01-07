@@ -106,6 +106,26 @@ class TestHistory(unittest.TestCase):
 
         self.assertEqual(expected_server_1, actual)
 
+    def test_reports_players(self):
+        self._record_character('1', 'F', player='p1')
+        self._record_character('2', 'F', player='p1')
+        self._record_character('3', 'F', player='p2')
+
+        self.sut.write_all()
+
+        players = self.sut.all_players()
+
+        self.assertEqual(2, len(players))
+
+    def test_cleans_duplicate_ids(self):
+        self._record_character('1', 'F')
+        self._record_character('1', 'M')
+        self._record_character('1', 'M')
+
+        self.sut.write_all()
+
+        self.assertListEqual(['1', '1d', '1dd'], sorted([c.id for c in self.sut.complete_characters()]))
+
     def _record_player_counts(self, records):
         for record in records:
             self.sut.record_player_count(record[0], record[1], record[2])
@@ -120,6 +140,7 @@ class TestHistory(unittest.TestCase):
     def _record_character(self, character_id, sex,
                           birth=default_birth,
                           death=default_birth + timedelta(minutes=60),
-                          mom_id=None):
-        self.sut.record_birth(character_id, birth, mom_id, sex, Coordinates(0, 0))
+                          mom_id=None,
+                          player='[SOMEONE]'):
+        self.sut.record_birth(character_id, birth, mom_id, sex, Coordinates(0, 0), player)
         self.sut.record_death(character_id, death)

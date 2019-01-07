@@ -30,6 +30,7 @@ def female(id='123', birth=default_birth, death=None):
         'id': id,
         'mom_id': None,
         'sex': 'F',
+        'player': '[SOMEONE]',
         'birth': birth,
         'birth_coordinates': Coordinates(0, 0),
         'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death
