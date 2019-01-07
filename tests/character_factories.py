@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from logreader.character import Character
+from logreader.character import Character, UNKNOWN_NAME
 from logreader.coordinates import Coordinates
 from tests.time_factories import hour
 
@@ -25,10 +25,12 @@ def surviving_mom_with_no_kids():
     return sut
 
 
-def female(id='123', birth=default_birth, death=None):
+def female(id='123', birth=default_birth, death=None, is_eve=False, name=UNKNOWN_NAME):
     data = {
         'id': id,
+        'name': name,
         'mom_id': None,
+        'is_eve': is_eve,
         'sex': 'F',
         'player': '[SOMEONE]',
         'birth': birth,

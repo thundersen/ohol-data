@@ -8,10 +8,10 @@ from timeutils.timeutils import round_minute_range
 FERTILE_START = timedelta(minutes=14)
 FERTILE_END = timedelta(minutes=40)
 FERTILE_END_EVE = timedelta(minutes=26)
-
+UNKNOWN_NAME = '[UNKNOWN]'
 
 class Character:
-    def __init__(self, kids, name='[UNKNOWN]', is_eve=False, **kwargs):
+    def __init__(self, kids, name=UNKNOWN_NAME, is_eve=False, **kwargs):
         self.kids = kids
         self.name = name
         self.id = kwargs['id']
