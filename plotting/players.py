@@ -39,8 +39,9 @@ def make_playtime_trace(players, threshold_hours):
 
 
 def print_top_ten(players):
-    top_ten = reversed(sorted(players, key=lambda p: p.total_playtime())[-10:])
-    top_ten_table = [(to_hours_per_day(p.total_playtime()), p.favorite_eve_name()) for p in top_ten]
+    n_eve_names = 3
+    top_ten = list(reversed(sorted(players, key=lambda p: p.total_playtime())[-10:]))
+    top_ten_table = [(to_hours_per_day(p.total_playtime()), p.favorite_eve_name(top=n_eve_names)) for p in top_ten]
     print('TOP TEN')
     print('=======')
     spot = 1
@@ -59,6 +60,8 @@ def print_top_ten(players):
 
 if __name__ == '__main__':
     history = read_characters(SERVERS, START, END)
+
+    history.print_completeness_report()
 
     players = history.all_players()
 

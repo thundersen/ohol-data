@@ -40,8 +40,8 @@ def female(id='123', birth=default_birth, death=None, is_eve=False, name=UNKNOWN
     return Character(kids=[], **data)
 
 
-def eve(id='123', birth=default_birth, death=None):
-    sut = female(id, birth, death)
+def eve(id='123', birth=default_birth, death=None, name=UNKNOWN_NAME):
+    sut = female(id, birth, death, name=name)
     sut.is_eve = True
     return sut
 

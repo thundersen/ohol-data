@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timedelta
 
 from logreader.player import Player
-from tests.character_factories import female
+from tests.character_factories import female, eve
 
 
 class TestPlayer(unittest.TestCase):
@@ -25,11 +25,22 @@ class TestPlayer(unittest.TestCase):
 
     def test_reports_favorite_eve_name(self):
         sut = Player('Someone')
-        sut.add_character(female(is_eve=True, name='EVE ILL'))
-        sut.add_character(female(is_eve=True, name='EVE ILL II'))
-        sut.add_character(female(is_eve=True, name='EVE EIGENRAUCH'))
+        sut.add_character(eve(name='EVE ILL'))
+        sut.add_character(eve(name='EVE ILL II'))
+        sut.add_character(eve(name='EVE EIGENRAUCH'))
         sut.add_character(female(name='HOPE'))
         sut.add_character(female(name='HOPE'))
         sut.add_character(female(name='HOPE'))
 
         self.assertEqual('EVE ILL', sut.favorite_eve_name())
+
+    def test_reports_top_favorite_eve_names(self):
+        sut = Player('Someone')
+        sut.add_character(eve(name='EVE ILL'))
+        sut.add_character(eve(name='EVE ILL II'))
+        sut.add_character(eve(name='EVE EIGENRAUCH'))
+        sut.add_character(eve(name='EVE GRIEF'))
+        sut.add_character(eve(name='EVE GRIEF'))
+        sut.add_character(eve(name='EVE GRIEF'))
+
+        self.assertEqual('EVE GRIEF, EVE ILL', sut.favorite_eve_name(top=2))
