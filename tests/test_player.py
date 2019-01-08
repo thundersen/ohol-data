@@ -23,6 +23,16 @@ class TestPlayer(unittest.TestCase):
 
         self.assertEqual(first_birth, sut.first_birth())
 
+    def test_reports_last_death(self):
+        sut = Player('Someone')
+        last_death = datetime(2019, 1, 1, 4, 0, 0)
+        sut.add_character(female(death=datetime(2019, 1, 1, 2, 0, 0)))
+        sut.add_character(female(death=last_death))
+        sut.add_character(female(death=datetime(2019, 1, 1, 3, 0, 0)))
+        sut.add_character(female(death=datetime(2019, 1, 1, 1, 0, 0)))
+
+        self.assertEqual(last_death, sut.last_death())
+
     def test_reports_favorite_eve_name(self):
         sut = Player('Someone')
         sut.add_character(eve(name='EVE ILL'))

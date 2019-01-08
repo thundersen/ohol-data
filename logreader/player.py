@@ -27,6 +27,9 @@ class Player:
     def first_birth(self):
         return min([c.birth for c in self.characters])
 
+    def last_death(self):
+        return max([c.death for c in self.characters])
+
     def favorite_eve_name(self, top=1):
         eve_names = [_strip_number_from_name(c.name) for c in self.characters
                      if c.is_eve and c.name is not UNKNOWN_NAME]
@@ -35,5 +38,6 @@ class Player:
             return UNKNOWN_NAME
 
         counts = collections.Counter(eve_names).most_common(top)
-
         return ', '.join([name for name, count in counts])
+
+
