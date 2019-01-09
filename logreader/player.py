@@ -40,4 +40,7 @@ class Player:
         counts = collections.Counter(eve_names).most_common(top)
         return ', '.join([name for name, count in counts])
 
+    def days_played(self):
+        return set([c.birth.date() for c in self.characters])
+
 
