@@ -35,7 +35,10 @@ def female(id='123', birth=default_birth, death=None, is_eve=False, name=UNKNOWN
         'player': '[SOMEONE]',
         'birth': birth,
         'birth_coordinates': Coordinates(0, 0),
-        'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death
+        'death': (birth + timedelta(minutes=60)) if death is None and birth is not None else death,
+        'death_coordinates': Coordinates(0, 0),
+        'murderer_id': None,
+        'murder_victims': []
     }
     return Character(kids=[], **data)
 

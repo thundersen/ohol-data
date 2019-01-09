@@ -126,6 +126,18 @@ class TestHistory(unittest.TestCase):
 
         self.assertListEqual(['1', '1d', '1dd'], sorted([c.id for c in self.sut.complete_characters()]))
 
+    def test_records_murders(self):
+        self._record_character('1', 'F')
+        self._record_character('2', 'F', murderer_id='1')
+        self._record_character('3', 'F', murderer_id='1')
+        self._record_character('4', 'F')
+
+        self.sut.write_all()
+
+        self.assertEqual('1', self.sut.character('2').murderer)
+        self.assertTrue(self.sut.character('1').is_murderer())
+        self.assertListEqual(['2', '3'], self.sut.character('1').murder_victims)
+
     def _record_player_counts(self, records):
         for record in records:
             self.sut.record_player_count(record[0], record[1], record[2])
@@ -137,10 +149,13 @@ class TestHistory(unittest.TestCase):
             counts_for_key[minute] = counts[key]
         return counts_for_key
 
-    def _record_character(self, character_id, sex,
+    def _record_character(self,
+                          character_id,
+                          sex,
                           birth=default_birth,
                           death=default_birth + timedelta(minutes=60),
                           mom_id=None,
-                          player='[SOMEONE]'):
+                          player='[SOMEONE]',
+                          murderer_id=None):
         self.sut.record_birth(character_id, birth, mom_id, sex, Coordinates(0, 0), player)
-        self.sut.record_death(character_id, death)
+        self.sut.record_death(character_id, death, Coordinates(0, 0), murderer_id)

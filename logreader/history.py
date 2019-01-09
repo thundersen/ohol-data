@@ -16,6 +16,7 @@ class History:
         self._incomplete = {}
         self._orphans = []
         self._count_tracker = PlayerCountTracker()
+        self._murder_victims = {}
 
     def record_name(self, character_id, name):
         character = self._find_or_create_character(character_id, 'name', name)
@@ -36,9 +37,20 @@ class History:
         else:
             self._record_relations(character, mom_id)
 
-    def record_death(self, character_id, timestamp):
+    def record_death(self, character_id, timestamp, coordinates, murderer_id):
         character = self._find_or_create_character(character_id, 'death', timestamp)
         character['death'] = timestamp
+        character['death_coordinates'] = coordinates
+        character['murderer_id'] = murderer_id
+
+        if murderer_id is not None:
+            self._record_murder(character_id, murderer_id)
+
+    def _record_murder(self, character_id, murderer_id):
+        if murderer_id not in self._murder_victims:
+            self._murder_victims[murderer_id] = [character_id]
+        else:
+            self._murder_victims[murderer_id].append(character_id)
 
     def _find_or_create_character(self, character_id, new_key, new_value):
 
@@ -130,6 +142,8 @@ class History:
         for character_id, data in self._reversed_character_data_items():
 
             kids = [k for k in [self._try_find_kid(kid_data['id']) for kid_data in data['kids_data']] if k is not None]
+
+            data['murder_victims'] = self._murder_victims[character_id] if character_id in self._murder_victims else []
 
             try:
                 self._characters[character_id] = Character(kids=kids, **data)

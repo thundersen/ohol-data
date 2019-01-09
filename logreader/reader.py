@@ -95,10 +95,19 @@ def _record_log_line(history, line, server_no):
         history.record_birth(character_id, timestamp, mom_id, sex, coordinates, player_sha1)
         _record_player_count(history, split[7], timestamp, server_no)
     elif log_type == 'D':
-        history.record_death(character_id, timestamp)
+        coordinates = _coordinates_from(split[6])
+        murderer_id = _murderer_id_if_present(server_no, split[7])
+        history.record_death(character_id, timestamp, coordinates, murderer_id)
         _record_player_count(history, split[8], timestamp, server_no)
     else:
         print('ERROR: unknown log type in ' + line)
+
+
+def _murderer_id_if_present(server_no, cause_of_death):
+    if not cause_of_death.starts_with('killer_'):
+        return None
+    raw_murderer_id = cause_of_death.split('_')[0]
+    return _server_specific_id_from(raw_murderer_id, server_no)
 
 
 def _record_names_line(history, line, server_no):

@@ -4,11 +4,11 @@ from datetimerange import DateTimeRange
 
 from timeutils.timeutils import round_minute_range
 
-
 FERTILE_START = timedelta(minutes=14)
 FERTILE_END = timedelta(minutes=40)
 FERTILE_END_EVE = timedelta(minutes=26)
 UNKNOWN_NAME = '[UNKNOWN]'
+
 
 class Character:
     def __init__(self, kids, name=UNKNOWN_NAME, is_eve=False, **kwargs):
@@ -19,9 +19,12 @@ class Character:
         self.birth = kwargs['birth']
         self.birth_coordinates = kwargs['birth_coordinates']
         self.death = kwargs['death']
+        self.death_coordinates = kwargs['death_coordinates']
         self.is_eve = is_eve
         self.mom_id = kwargs['mom_id']
         self.player = kwargs['player']
+        self.murderer = kwargs['murderer_id']
+        self.murder_victims = kwargs['murder_victims']
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)
@@ -70,3 +73,6 @@ class Character:
 
     def is_surviving_mom(self):
         return self.sex == 'F' and self.has_outlived_fertility()
+
+    def is_murderer(self):
+        return len(self.murder_victims) > 0
