@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as py
-from logreader.reader import read_characters
+from logreader.reader import read_history
 from timeutils.timeutils import round_minute_range
 
 SERVERS = [1,2,3]
@@ -82,7 +82,7 @@ def arrange_plot_data(minute_stats):
 
 if __name__ == '__main__':
 
-    history = read_characters(SERVERS, START, END)
+    history = read_history(SERVERS, START, END)
 
     minute_stats = create_stats_per_minute(history, START, END)
 

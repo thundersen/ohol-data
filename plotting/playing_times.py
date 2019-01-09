@@ -3,7 +3,7 @@ from datetime import date
 import plotly.graph_objs as go
 import plotly.offline as py
 
-from logreader.reader import read_characters
+from logreader.reader import read_history
 
 SERVERS = [1, 2, 3, 4, 5, 6, 7]
 
@@ -57,7 +57,7 @@ def print_top_ten(players):
 
 
 def read_players():
-    history = read_characters(SERVERS, START, END)
+    history = read_history(SERVERS, START, END)
     history.print_completeness_report()
     players = history.all_players()
     n_players = len(players)

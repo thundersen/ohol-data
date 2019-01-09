@@ -7,7 +7,7 @@ from logreader.logfile_names import build_local_filenames_for_server_and_day
 from timeutils.timeutils import date_range
 
 
-def read_characters(servers, from_date, to_date):
+def read_history(servers, from_date, to_date):
     history = History()
 
     for server in servers:

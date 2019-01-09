@@ -1,13 +1,13 @@
 from datetime import date
 
-from logreader.reader import read_characters
+from logreader.reader import read_history
 
 SERVER = 1
 DATE = date(2018, 12, 18)
 
 
 if __name__ == '__main__':
-    history = read_characters([SERVER], DATE, DATE)
+    history = read_history([SERVER], DATE, DATE)
 
     zero_daughters = [x for x in history.complete_characters() if x.is_zero_girl_mom()]
 

@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as py
 
-from logreader.reader import read_characters
+from logreader.reader import read_history
 from timeutils.timeutils import round_minute_range, round_minute
 
 SERVER = 3
@@ -105,7 +105,7 @@ def create_plot(mom, data):
 
 if __name__ == '__main__':
 
-    history = read_characters([SERVER], START, START)
+    history = read_history([SERVER], START, START)
 
     minute_stats = create_stats_per_minute(history, START, END)
 

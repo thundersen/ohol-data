@@ -3,7 +3,7 @@ import csv
 import zipfile
 from zipfile import ZipFile
 
-from logreader.reader import read_characters
+from logreader.reader import read_history
 
 SERVERS = [1, 2, 3, 4, 5, 6, 7]
 FROM_DATE = date(2018, 8, 1)
@@ -53,7 +53,7 @@ def write_lineages(history):
 
 
 if __name__ == '__main__':
-    history = read_characters(SERVERS, FROM_DATE, TO_DATE)
+    history = read_history(SERVERS, FROM_DATE, TO_DATE)
 
     write_characters(history)
     write_lineages(history)

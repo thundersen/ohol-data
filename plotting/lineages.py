@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.offline as py
 
-from logreader.reader import read_characters
+from logreader.reader import read_history
 
 SERVERS = [1]
 FROM_DATE = date(2018, 12, 28)
@@ -59,7 +59,7 @@ def make_player_trace(player_counts_dict):
 
 
 if __name__ == '__main__':
-    history = read_characters(SERVERS, FROM_DATE, TO_DATE)
+    history = read_history(SERVERS, FROM_DATE, TO_DATE)
 
     lineage_trace = make_lineage_trace(history.all_lineages())
 
