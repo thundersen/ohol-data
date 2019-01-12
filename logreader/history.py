@@ -37,10 +37,11 @@ class History:
         else:
             self._record_relations(character, mom_id)
 
-    def record_death(self, character_id, timestamp, coordinates, murderer_id):
+    def record_death(self, character_id, timestamp, coordinates, cause_of_death, murderer_id):
         character = self._find_or_create_character(character_id, 'death', timestamp)
         character['death'] = timestamp
         character['death_coordinates'] = coordinates
+        character['cause_of_death'] = cause_of_death
         character['murderer_id'] = murderer_id
 
         if murderer_id is not None:

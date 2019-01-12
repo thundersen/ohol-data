@@ -25,6 +25,7 @@ class Character:
         self.player = kwargs['player']
         self.murderer = kwargs['murderer_id']
         self.murder_victims = kwargs['murder_victims']
+        self.cause_of_death = kwargs['cause_of_death']
 
     def __str__(self):
         return self.id + " | " + self.name + " | " + str(self.birth) + " - " + str(self.death)
@@ -63,7 +64,7 @@ class Character:
         return self.is_surviving_mom() and not self.has_daughters()
 
     def has_outlived_fertility(self):
-        return self.is_complete() and (self.death - self.birth) > FERTILE_END
+        return self.is_complete() and (self._calculate_age()) > FERTILE_END
 
     def is_mom_with_girls(self):
         return self.is_surviving_mom() and self.has_daughters()
@@ -76,3 +77,9 @@ class Character:
 
     def is_murderer(self):
         return len(self.murder_victims) > 0
+
+    def age_at_death(self):
+        return self._calculate_age() if self.birth is not None and self.death is not None else None
+
+    def _calculate_age(self):
+        return self.death - self.birth

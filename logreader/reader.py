@@ -96,17 +96,27 @@ def _record_log_line(history, line, server_no):
         _record_player_count(history, split[7], timestamp, server_no)
     elif log_type == 'D':
         coordinates = _coordinates_from(split[6])
-        murderer_id = _murderer_id_if_present(server_no, split[7])
-        history.record_death(character_id, timestamp, coordinates, murderer_id)
+        cause_of_death = _parse_cause_of_death(split[7])
+        murderer_id = _murderer_id_from(server_no, split[7]) if _is_murder(split[7]) else None
+        history.record_death(character_id, timestamp, coordinates, cause_of_death, murderer_id)
         _record_player_count(history, split[8], timestamp, server_no)
     else:
         print('ERROR: unknown log type in ' + line)
 
 
-def _murderer_id_if_present(server_no, cause_of_death):
-    if not cause_of_death.starts_with('killer_'):
-        return None
-    raw_murderer_id = cause_of_death.split('_')[0]
+def _parse_cause_of_death(raw_cause_of_death):
+    return \
+        'murder' if _is_murder(raw_cause_of_death) \
+            else 'other' if raw_cause_of_death == 'hunger' \
+            else raw_cause_of_death
+
+
+def _is_murder(cause_of_death):
+    return cause_of_death.startswith('killer_')
+
+
+def _murderer_id_from(server_no, cause_of_death):
+    raw_murderer_id = cause_of_death.split('_')[1]
     return _server_specific_id_from(raw_murderer_id, server_no)
 
 

@@ -94,3 +94,16 @@ class TestCharacter(unittest.TestCase):
         self.assertEqual(
             DateTimeRange(sut.birth, sut.birth + FERTILE_END_EVE),
             sut.fertility_period())
+
+    def test_age_at_death(self):
+
+        cases = [
+            (minute('01:00'), minute('02:00'), 1),
+            (minute('01:00'), minute('03:00'), 2),
+            (minute('01:00'), minute('03:30'), 2.5),
+        ]
+
+        for birth, death, expected_age in cases:
+            sut = female(birth=birth, death=death)
+            with self.subTest(f'{birth}, {death}'):
+                self.assertEqual(timedelta(minutes=expected_age), sut.age_at_death())
